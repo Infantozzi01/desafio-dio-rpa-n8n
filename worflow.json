@@ -1,0 +1,62 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "investimentos",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook RPA",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "webhook-investimentos-rpa"
+    },
+    {
+      "parameters": {
+        "url": "https://digitalinnovationone.github.io/dio-lab-assistente-investimentos-rpa-n8n/docs/data.csv",
+        "options": {}
+      },
+      "id": "2",
+      "name": "Buscar Tabela CSV",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cliente = $items(\"Webhook RPA\")[0].json;\nconst csvData = $input.all()[0].json.data;\n\n// Lógica para definir a mensagem de acordo com o perfil\nlet recomendacao = \"\";\nif (cliente.perfil === \"Conservador\") {\n  recomendacao = \"Recomendamos Tesouro Direto e CDBs de liquidez diária.\";\n} else if (cliente.perfil === \"Moderado\") {\n  recomendacao = \"Recomendamos uma carteira mista com Fundos Multimercado e CDBs.\";\n} else {\n  recomendacao = \"Recomendamos diversificação em Ações e Fundos Imobiliários (FIIs).\";\n}\n\n// Retornar os dados cruzados e prontos para envio\nreturn {\n  json: {\n    nome_cliente: cliente.nome,\n    email: cliente.email,\n    perfil_investidor: cliente.perfil,\n    saldo_atual: cliente.saldo,\n    mensagem_sugerida: `Olá, ${cliente.nome}! Analisamos o seu perfil ${cliente.perfil} e seu saldo atual de ${cliente.saldo}. ${recomendacao}`\n  }\n};"
+      },
+      "id": "3",
+      "name": "Cruzar Dados e Gerar Mensagem",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Webhook RPA": {
+      "main": [
+        [
+          {
+            "node": "Buscar Tabela CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Tabela CSV": {
+      "main": [
+        [
+          {
+            "node": "Cruzar Dados e Gerar Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
