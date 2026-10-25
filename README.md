@@ -142,7 +142,6 @@ Faz `GET` no `data.csv` hospedado no GitHub Pages. O conteúdo chega como texto 
 
 ## Evidência de funcionamento
 
-> Substitua os arquivos abaixo pelos seus prints em `docs/img/`.
 
 | Execução do script | Workflow no n8n | Saída final |
 |---|---|---|
